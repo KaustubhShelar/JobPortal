@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class JobService {
@@ -23,5 +22,12 @@ public class JobService {
 
     public Job createJob(Job job) {
         return jobRepository.save(job);
+    }
+
+    public void deleteJob(String id) {
+        if (!jobRepository.existsById(id)) {
+            throw new RuntimeException("Job with ID " + id + " not found.");
+        }
+        jobRepository.deleteById(id);
     }
 }
