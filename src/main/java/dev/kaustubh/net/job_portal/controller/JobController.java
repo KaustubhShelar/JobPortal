@@ -1,6 +1,7 @@
 package dev.kaustubh.net.job_portal.controller;
 
 import dev.kaustubh.net.job_portal.model.Job;
+import dev.kaustubh.net.job_portal.model.User;
 import dev.kaustubh.net.job_portal.service.JobService;
 import dev.kaustubh.net.job_portal.service.UserService;
 import dev.kaustubh.net.job_portal.util.JwtUtil;
@@ -54,6 +55,16 @@ public class JobController {
             Job savedJob = jobService.createJob(job);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedJob);
         } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateJob(@PathVariable String id, @RequestBody Job jobUpdates) {
+        try {
+            Job updatedJob = jobService.updateJob(id, jobUpdates);
+            return ResponseEntity.ok().body(updatedJob);
+        } catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
