@@ -36,6 +36,11 @@ public class JobController {
         return ResponseEntity.ok(jobService.jobById(id));
     }
 
+    @GetMapping("/employer/{employerId}")
+    public ResponseEntity<List<Job>> getJobByEmployerId(@PathVariable String employerId){
+        return ResponseEntity.ok(jobService.jobByEmployerId(employerId));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<?> createJob(@RequestBody Job job, HttpServletRequest request) {
         try {

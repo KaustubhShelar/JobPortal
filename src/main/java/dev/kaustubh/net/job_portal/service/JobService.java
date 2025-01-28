@@ -21,6 +21,10 @@ public class JobService {
         return jobRepository.findById(id).orElseThrow(() -> new RuntimeException("Job not found!"));
     }
 
+    public List<Job> jobByEmployerId(String employerId){
+        return jobRepository.findByEmployerId(employerId);
+    }
+
     public Job createJob(Job job) {
         return jobRepository.save(job);
     }
