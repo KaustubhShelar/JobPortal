@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface ApplicationRepository extends MongoRepository<Application, String> {
     Optional<List<Application>> findByUserId(String userId);
+    Optional<List<Application>> findByJobId(String jobId);
+    Optional<List<Application>> findByStatus(String status);
 }

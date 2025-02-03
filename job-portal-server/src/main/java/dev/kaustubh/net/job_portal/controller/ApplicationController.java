@@ -29,14 +29,12 @@ public class ApplicationController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @GetMapping("")
-    public ResponseEntity<List<Application>> getAllApplications(){
-        return ResponseEntity.ok(applicationService.allApplications());
-    }
-
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<Application>> getApplicationById(@PathVariable String userId){
-       return ResponseEntity.ok(applicationService.applicationByUserId(userId));
+    @GetMapping
+    public ResponseEntity<List<Application>> getApplications(
+            @RequestParam(required = false) String userId,
+            @RequestParam(required = false) String jobId,
+            @RequestParam(required = false) String status){
+        return ResponseEntity.ok(applicationService.getApplications(userId, jobId, status));
     }
 
     private double calculateRankScore(User user, Job job, Application application){

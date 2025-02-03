@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -43,6 +44,16 @@ public class UserController {
             return ResponseEntity.ok().body(token);
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable String id, @RequestBody User userUpdates) {
+        try {
+            User updatedUser = userService.updateUser(id, userUpdates);
+            return ResponseEntity.ok().body(updatedUser);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
 }

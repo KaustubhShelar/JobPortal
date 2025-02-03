@@ -59,4 +59,36 @@ public class UserService {
 
         return jwtUtil.generateToken(email);
     }
+
+    public User updateUser(String id, User userUpdates) {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (userUpdates.getName() != null) {
+            existingUser.setName(userUpdates.getName());
+        }
+        if (userUpdates.getEmail() != null) {
+            existingUser.setEmail(userUpdates.getEmail());
+        }
+        if (userUpdates.getPassword() != null) {
+            existingUser.setPassword(passwordEncoder.encode((userUpdates.getPassword())));
+        }
+        if (userUpdates.getRole() != null) {
+            existingUser.setRole(userUpdates.getRole());
+        }
+        if (userUpdates.getSkills() != null) {
+            List<String> existingSkills = existingUser.getSkills();
+            if(existingSkills != null){
+                userUpdates.getSkills().forEach(skill -> {
+                    if (!existingSkills.contains(skill)) {
+                        existingSkills.add(skill);
+                    }
+                });
+            }else {
+                existingUser.setSkills(userUpdates.getSkills());
+            }
+        }
+
+        return userRepository.save(existingUser);
+    }
 }

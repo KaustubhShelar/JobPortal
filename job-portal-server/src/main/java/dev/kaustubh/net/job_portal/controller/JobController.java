@@ -1,6 +1,7 @@
 package dev.kaustubh.net.job_portal.controller;
 
 import dev.kaustubh.net.job_portal.model.Job;
+import dev.kaustubh.net.job_portal.model.User;
 import dev.kaustubh.net.job_portal.service.JobService;
 import dev.kaustubh.net.job_portal.service.UserService;
 import dev.kaustubh.net.job_portal.util.JwtUtil;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/jobs")
 public class JobController {
@@ -35,6 +37,11 @@ public class JobController {
         return ResponseEntity.ok(jobService.jobById(id));
     }
 
+    @GetMapping("/employer/{employerId}")
+    public ResponseEntity<List<Job>> getJobByEmployerId(@PathVariable String employerId){
+        return ResponseEntity.ok(jobService.jobByEmployerId(employerId));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<?> createJob(@RequestBody Job job, HttpServletRequest request) {
         try {
@@ -54,6 +61,16 @@ public class JobController {
             Job savedJob = jobService.createJob(job);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedJob);
         } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateJob(@PathVariable String id, @RequestBody Job jobUpdates) {
+        try {
+            Job updatedJob = jobService.updateJob(id, jobUpdates);
+            return ResponseEntity.ok().body(updatedJob);
+        } catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
