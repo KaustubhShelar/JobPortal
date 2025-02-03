@@ -12,7 +12,8 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await loginUser({ email, password });
-      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("token", res.data);
+      console.log("token: "+res.data);
       navigate("/jobs");
     } catch (error) {
       alert("Login failed");

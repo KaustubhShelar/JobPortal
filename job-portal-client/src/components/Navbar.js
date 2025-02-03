@@ -1,5 +1,6 @@
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import Sidebar from "./SideBar";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -7,11 +8,11 @@ const Navbar = () => {
   return (
     <AppBar position="static">
       <Toolbar>
+        <Sidebar/>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           Job Portal
         </Typography>
-        <Button color="inherit" onClick={() => navigate("/jobs")}>Jobs</Button>
-        <Button color="inherit" onClick={() => navigate("/login")}>Login</Button>
+        {/* <Button color="inherit" onClick={() => navigate("/job")}>Jobs</Button> */}
       </Toolbar>
     </AppBar>
   );

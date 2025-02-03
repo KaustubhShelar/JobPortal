@@ -9,6 +9,6 @@ export const registerUser = async (userData) => {
 export const loginUser = async (credentials) => {
   const { email, password } = credentials;
   const url = `/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
-
+  console.log("url: "+ url);
   return await axios.post(`${API_URL}`+ url);
 };
