@@ -28,8 +28,13 @@ public class JobController {
     private UserService userService;
 
     @GetMapping("")
-    public ResponseEntity<List<Job>> getAllJobs(){
-        return ResponseEntity.ok(jobService.allJobs());
+    public ResponseEntity<List<Job>> getAllJobs(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) Double salary,
+            @RequestParam(required = false) String requiredEducation,
+            @RequestParam(required = false) Integer requiredExperience){
+        return ResponseEntity.ok(jobService.getJobsByFilter(title, location, salary, requiredEducation, requiredExperience));
     }
 
     @GetMapping("/{id}")

@@ -27,6 +27,11 @@ public class UserController {
         return ResponseEntity.ok(userService.userById(id));
     }
 
+    @GetMapping("/email/{email}")
+    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(userService.userByEmail(email));
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         try{

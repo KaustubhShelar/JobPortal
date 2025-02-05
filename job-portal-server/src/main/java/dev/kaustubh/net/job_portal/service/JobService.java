@@ -1,9 +1,13 @@
 package dev.kaustubh.net.job_portal.service;
 
+import dev.kaustubh.net.job_portal.model.Application;
 import dev.kaustubh.net.job_portal.model.Job;
 import dev.kaustubh.net.job_portal.model.User;
 import dev.kaustubh.net.job_portal.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,9 +16,27 @@ import java.util.List;
 public class JobService {
     @Autowired
     private JobRepository jobRepository;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
-    public List<Job> allJobs(){
-        return jobRepository.findAll();
+    public List<Job> getJobsByFilter(String title,String location,Double salary,String requiredEducation,Integer requiredExperience){
+        Query query = new Query();
+        if(title != null && !title.isEmpty()){
+            query.addCriteria(Criteria.where("title").is(title));
+        }
+        if (location != null && !location.isEmpty()) {
+            query.addCriteria(Criteria.where("location").is(location));
+        }
+        if (salary != null) {
+            query.addCriteria(Criteria.where("salary").is(salary));
+        }
+        if (requiredEducation != null && !requiredEducation.isEmpty()) {
+            query.addCriteria(Criteria.where("requiredEducation").is(requiredEducation));
+        }
+        if (requiredExperience != null) {
+            query.addCriteria(Criteria.where("requiredExperience").is(requiredExperience));
+        }
+        return mongoTemplate.find(query, Job.class);
     }
 
     public Job jobById(String id){

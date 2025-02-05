@@ -14,9 +14,10 @@ public class JwtUtil {
     private static final String SECRET_KEY = "aRandomlyGeneratedSecretKeyForJobPortal12348888!";
     private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 5;
 
-    public String generateToken(String email) {
+    public String generateToken(String email, String userId) {
         return Jwts.builder()
                 .setSubject(email)
+                .claim("userId", userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
