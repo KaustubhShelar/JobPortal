@@ -2,6 +2,7 @@ import { useState } from "react";
 import { loginUser } from "../api/auth";
 import { useNavigate } from "react-router-dom";
 import { Container, TextField, Button, Typography, Box } from "@mui/material";
+import { getUserByEmail } from "../api/user";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,7 +14,9 @@ const Login = () => {
     try {
       const res = await loginUser({ email, password });
       localStorage.setItem("token", res.data);
+      const resUser = await getUserByEmail(email);
       console.log("token: "+res.data);
+      console.log("userData: "+resUser.data.id);
       navigate("/jobs");
     } catch (error) {
       alert("Login failed");

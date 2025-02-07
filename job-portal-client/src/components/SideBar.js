@@ -11,15 +11,18 @@ const Sidebar = () => {
 
   const menuItems = [
     { text: "Home", link: "/" },
-    { text: "View Profile", link: "/profile" },
     { text: "View Applications", link: "/applications" },
-    { text: "Search Jobs", link: "/search-jobs" },
-    { text: "Logout", link: "/logout" },
+    { text: "Search Jobs", link: "/search-jobs" }
   ];
 
   return (
     <>
-      <IconButton onClick={toggleDrawer(true)}>
+      <IconButton size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+            onClick={toggleDrawer(true)}>
         <MenuIcon />
       </IconButton>
 

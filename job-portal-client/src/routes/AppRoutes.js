@@ -7,6 +7,7 @@ import Logout from "../pages/Logout";
 import Applications from "../pages/application/Applications";
 import SearchJobs from "../pages/job/SearchJobs";
 import Profile from "../pages/user/Profile";
+import JobDetails from "../pages/job/JobDetails";
 
 const AppRoutes = () => {
   return (
@@ -17,6 +18,7 @@ const AppRoutes = () => {
         {/* <Route path="/register" element={<Register />} /> */}
         <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
         <Route path="/jobs" element={<PrivateRoute><Jobs /></PrivateRoute>} />
+        <Route path="/jobs/:id" element={<JobDetails />} />
         <Route path="/applications" element={<PrivateRoute><Applications /></PrivateRoute>} />
         <Route path="/search-jobs" element={<PrivateRoute><SearchJobs /></PrivateRoute>} />
         <Route path="/logout" element={<Logout />} />
