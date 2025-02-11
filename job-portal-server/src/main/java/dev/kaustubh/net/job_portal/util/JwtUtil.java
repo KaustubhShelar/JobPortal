@@ -12,7 +12,7 @@ import java.util.Date;
 public class JwtUtil {
 
     private static final String SECRET_KEY = "aRandomlyGeneratedSecretKeyForJobPortal12348888!";
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 5;
+    private static final long EXPIRATION_TIME = 1000 * 60 * 30;
 
     public String generateToken(String email, String userId) {
         return Jwts.builder()

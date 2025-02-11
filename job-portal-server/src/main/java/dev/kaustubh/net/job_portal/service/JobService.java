@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class JobService {
@@ -19,7 +20,7 @@ public class JobService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    public List<Job> getJobsByFilter(String title,String location,Double salary,String requiredEducation,Integer requiredExperience){
+    public List<Job> getJobsByFilter(String title,String location,Double salary,String requiredEducation,List<String> skillsRequired, Integer requiredExperience){
         Query query = new Query();
         if(title != null && !title.isEmpty()){
             query.addCriteria(Criteria.where("title").is(title));
@@ -33,6 +34,9 @@ public class JobService {
         if (requiredEducation != null && !requiredEducation.isEmpty()) {
             query.addCriteria(Criteria.where("requiredEducation").is(requiredEducation));
         }
+        if (skillsRequired != null && !skillsRequired.isEmpty()) {
+            query.addCriteria(Criteria.where("skillsRequired").in(skillsRequired));
+        }
         if (requiredExperience != null) {
             query.addCriteria(Criteria.where("requiredExperience").is(requiredExperience));
         }
@@ -41,6 +45,18 @@ public class JobService {
 
     public Job jobById(String id){
         return jobRepository.findById(id).orElseThrow(() -> new RuntimeException("Job not found!"));
+    }
+
+    public List<String> jobSkills(){
+        return jobRepository.findDistinctSkills();
+    }
+
+    public List<String> jobLocations(){
+        return jobRepository.findDistinctLocations()
+                .stream()
+                .map(Job::getLocation)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     public List<Job> jobByEmployerId(String employerId){

@@ -33,13 +33,24 @@ public class JobController {
             @RequestParam(required = false) String location,
             @RequestParam(required = false) Double salary,
             @RequestParam(required = false) String requiredEducation,
+            @RequestParam(required = false) List<String> skillsRequired,
             @RequestParam(required = false) Integer requiredExperience){
-        return ResponseEntity.ok(jobService.getJobsByFilter(title, location, salary, requiredEducation, requiredExperience));
+        return ResponseEntity.ok(jobService.getJobsByFilter(title, location, salary, requiredEducation, skillsRequired, requiredExperience));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Job> getJobById(@PathVariable String id){
         return ResponseEntity.ok(jobService.jobById(id));
+    }
+
+    @GetMapping("/skills")
+    public ResponseEntity<List<String>> getJobSkills(){
+        return ResponseEntity.ok(jobService.jobSkills());
+    }
+
+    @GetMapping("/locations")
+    public ResponseEntity<List<String>> getJobLocations(){
+        return ResponseEntity.ok(jobService.jobLocations());
     }
 
     @GetMapping("/employer/{employerId}")
