@@ -3,17 +3,40 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      light: '#757ce8',
-      main: '#1976d2',
-      dark: '#002884',
-      contrastText: '#fff',
+      main: '#1976d2', // Blue
     },
     secondary: {
-      light: '#ff7961',
-      main: '#3d5afe',
-      dark: '#ba000d',
-      contrastText: '#000',
+      main: '#3d5afe', // Light Blue
+    },
+    success: {
+      main: '#2E7D32', // Green for Salary text
+    },
+  },
+  typography: {
+    fontFamily: "'Poppins', sans-serif",
+    h4: {
+      fontWeight: 700,
+    },
+    h6: {
+      fontWeight: 600,
+    },
+    body2: {
+      color: "#555",
+    },
+  },
+  components: {
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
+          transition: "0.3s",
+          "&:hover": {
+            boxShadow: "0px 6px 15px rgba(0,0,0,0.2)",
+          },
+        },
+      },
     },
   },
 });
-  export default theme;
+
+export default theme;

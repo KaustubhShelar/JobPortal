@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button, Grid, MenuItem, Select, InputLabel, FormControl, Card, CardContent, Typography } from "@mui/material";
+import { TextField, Button, Grid, Autocomplete, Card, CardContent, Typography, CircularProgress } from "@mui/material";
 import axios from "axios";
+import Navbar from "../../components/Navbar"
 
 const SearchJobs = () => {
   const [filters, setFilters] = useState({
@@ -13,34 +14,74 @@ const SearchJobs = () => {
   const [skills, setSkills] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [skillsLoading, setSkillsLoading] = useState(false);
+  const [locationsLoading, setLocationsLoading] = useState(false);
+  const [searchLocation, setSearchLocation] = useState("");
+  const [searchSkill, setSearchSkill] = useState("");
 
-  // Fetch locations and skills from the database on component mount
+  // Fetch locations dynamically based on input
   useEffect(() => {
-    const fetchFilters = async () => {
+    if (!searchLocation.trim()) {
+      setLocations([]); // Clear suggestions if input is empty
+      return;
+    }
+
+    const timeoutId = setTimeout(async () => {
       try {
-        // const locationResponse = await axios.get("http://localhost:8080/api/jobs/locations");
-        // setLocations(locationResponse.data);
-
-        const skillsResponse = await axios.get("http://localhost:8080/api/jobs/skills");
-        setSkills(skillsResponse.data);
+        setLocationsLoading(true);
+        const response = await axios.get(`http://localhost:8080/api/jobs/locations?query=${searchLocation}`);
+        console.log(response.data);
+        setLocations(response.data);
       } catch (error) {
-        console.error("Error fetching filter data", error);
+        console.error("Error fetching locations", error);
+      } finally {
+        setLocationsLoading(false);
       }
-    };
+    }, 500);
 
-    fetchFilters();
-  }, []);
+    return () => clearTimeout(timeoutId);
+  }, [searchLocation]);
 
-  const handleChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
+  // Fetch skills dynamically based on input
+  useEffect(() => {
+    if (!searchSkill.trim()) {
+      setSkills([]); // Clear suggestions if input is empty
+      return;
+    }
+
+    const timeoutId = setTimeout(async () => {
+      try {
+        setSkillsLoading(true);
+        const response = await axios.get(`http://localhost:8080/api/jobs/skills?query=${searchSkill}`);
+        setSkills(response.data);
+      } catch (error) {
+        console.error("Error fetching skills", error);
+      } finally {
+        setSkillsLoading(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchSkill]);
+
+  const handleLocationChange = (event, newValue) => {
+    setSearchLocation(newValue || ""); // Update search term
+    setFilters({ ...filters, location: newValue || "" });
+
+    // **Clear the dropdown options after selection**
+    setTimeout(() => {
+      setLocations([]);
+    }, 100); 
   };
 
-  const handleSkillsChange = (e) => {
-    setFilters({ ...filters, skillsRequired: e.target.value });
-  };
+  const handleSkillsChange = (event, newValue) => {
+    setSearchSkill(""); // Clear search term
+    setFilters({ ...filters, skillsRequired: newValue || [] });
 
-  const handleClearSkills = () => {
-    setFilters({ ...filters, skillsRequired: [] });
+    // **Clear the dropdown options after selection**
+    setTimeout(() => {
+      setSkills([]);
+    }, 100);
   };
 
   const handleSearch = async () => {
@@ -49,12 +90,9 @@ const SearchJobs = () => {
       const response = await axios.get("http://localhost:8080/api/jobs", {
         params: {
           ...filters,
-          skillsRequired: Array.isArray(filters.skillsRequired) ? filters.skillsRequired.join(",") : filters.skillsRequired,
+          skillsRequired: filters.skillsRequired.join(","),
         },
       });
-      console.log("response: " +filters.location );
-      console.log("response: " +filters.skillsRequired );
-      console.log("response: " +filters.requiredExperience );
       setJobs(response.data);
     } catch (error) {
       console.error("Error fetching jobs", error);
@@ -63,22 +101,43 @@ const SearchJobs = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div>
+    <Navbar />
+    <div style={{ padding: "20px" }}>   
       <h2>Search Jobs</h2>
 
-      {/* Filter Section */}
       <Grid container spacing={2}>
-        {/* Location Dropdown */}
+        {/* Location Search */}
         <Grid item xs={12} sm={6} md={4}>
-          <FormControl fullWidth>
-            <InputLabel>Location</InputLabel>
-            <Select name="location" value={filters.location} onChange={handleChange}>
-              <MenuItem value="">All Locations</MenuItem>
-              {locations.map((loc) => (
-                <MenuItem key={loc} value={loc}>{loc}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <Autocomplete
+            options={locations}
+            value={filters.location}
+            onInputChange={(event, newValue) => {
+              setSearchLocation(newValue || ""); // Update search term
+              if (!newValue) {
+                setLocations([]); // Clear options when input is empty
+              }
+            }}
+            onChange={handleLocationChange}
+            freeSolo
+            loading={locationsLoading}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Search Location"
+                placeholder="Start typing..."
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <>
+                      {locationsLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                      {params.InputProps.endAdornment}
+                    </>
+                  ),
+                }}
+              />
+            )}
+          />
         </Grid>
 
         {/* Experience Input */}
@@ -89,25 +148,37 @@ const SearchJobs = () => {
             name="requiredExperience"
             type="number"
             value={filters.requiredExperience}
-            onChange={handleChange}
+            onChange={(e) => setFilters({ ...filters, requiredExperience: e.target.value })}
           />
         </Grid>
 
-        {/* Skills Dropdown */}
+        {/* Skills Search */}
         <Grid item xs={12} sm={6} md={4}>
-          <FormControl fullWidth>
-            <InputLabel>Skills(select multiple)</InputLabel>
-            <Select name="skillsRequired" value={filters.skillsRequired} onChange={handleSkillsChange}
+          <Autocomplete
             multiple
-            renderValue={(selected) => Array.isArray(selected) ? selected.join(", ") : selected}
-            >
-              <MenuItem onClick={handleClearSkills} style={{ color: "red" }}>Clear All
-              </MenuItem>
-              {skills.map((skill) => (
-                <MenuItem key={skill} value={skill}>{skill}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+            options={skills}
+            value={filters.skillsRequired}
+            onInputChange={(event, newValue) => setSearchSkill(newValue || "")}
+            onChange={handleSkillsChange}
+            freeSolo
+            loading={skillsLoading}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Search Skills"
+                placeholder="Start typing..."
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <>
+                      {skillsLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                      {params.InputProps.endAdornment}
+                    </>
+                  ),
+                }}
+              />
+            )}
+          />
         </Grid>
       </Grid>
 
@@ -115,7 +186,6 @@ const SearchJobs = () => {
         Search
       </Button>
 
-      {/* Display Jobs */}
       <div style={{ marginTop: "20px" }}>
         {loading ? (
           <p>Loading...</p>
@@ -132,6 +202,7 @@ const SearchJobs = () => {
           ))
         )}
       </div>
+    </div>
     </div>
   );
 };

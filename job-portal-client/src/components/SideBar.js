@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Drawer, List, ListItem, ListItemText, IconButton, Divider } from "@mui/material";
+import { Drawer, List, ListItem, ListItemText, IconButton, Divider, ListItemButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 
 const Sidebar = () => {
@@ -30,8 +30,10 @@ const Sidebar = () => {
         <List>
           {menuItems.map((item, index) => (
             <React.Fragment key={item.text}>
-              <ListItem button onClick={() => (window.location.href = item.link)}>
-                <ListItemText primary={item.text} />
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => (window.location.href = item.link)}>
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
               </ListItem>
               {index !== menuItems.length - 1 && <Divider />}
             </React.Fragment>

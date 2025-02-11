@@ -8,10 +8,12 @@ import Applications from "../pages/application/Applications";
 import SearchJobs from "../pages/job/SearchJobs";
 import Profile from "../pages/user/Profile";
 import JobDetails from "../pages/job/JobDetails";
+import UseAuthCheck from "../api/useAuthCheck";
 
 const AppRoutes = () => {
   return (
     <Router>
+      <UseAuthCheck />
       <Routes>
         <Route path="/" element={<PrivateRoute><Jobs /></PrivateRoute>} />
         <Route path="/login" element={<Login />} />
