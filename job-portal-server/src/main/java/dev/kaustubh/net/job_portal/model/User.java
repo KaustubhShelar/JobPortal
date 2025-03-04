@@ -17,6 +17,7 @@ public class User {
     private String email;
     private String password;
     private String role;
+    private String companyId;
     private List<String> skills;
 
     public String getId() {
@@ -57,6 +58,14 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId;
     }
 
     public List<String> getSkills() {

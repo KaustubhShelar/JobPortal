@@ -17,10 +17,12 @@ public class Job {
     private String description;
     private String location;
     private List<String> skillsRequired;
-    private double salary;
+    private String salary;
     private String employerId;
-    private int requiredExperience;
+    private String requiredExperience;
     private String requiredEducation;
+    private String companyId;
+    private String postedAt;
 
     public String getId() {
         return id;
@@ -62,11 +64,11 @@ public class Job {
         this.skillsRequired = skillsRequired;
     }
 
-    public double getSalary() {
+    public String getSalary() {
         return salary;
     }
 
-    public void setSalary(double salary) {
+    public void setSalary(String salary) {
         this.salary = salary;
     }
 
@@ -78,11 +80,11 @@ public class Job {
         this.employerId = employerId;
     }
 
-    public int getRequiredExperience() {
+    public String getRequiredExperience() {
         return requiredExperience;
     }
 
-    public void setRequiredExperience(int experience) {
+    public void setRequiredExperience(String experience) {
         this.requiredExperience = experience;
     }
 
@@ -92,5 +94,21 @@ public class Job {
 
     public void setRequiredEducation(String requiredEducation) {
         this.requiredEducation = requiredEducation;
+    }
+
+    public String getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId;
+    }
+
+    public String getPostedAt() {
+        return postedAt;
+    }
+
+    public void setPostedAt(String postedAt) {
+        this.postedAt = postedAt;
     }
 }

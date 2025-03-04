@@ -1,6 +1,5 @@
 package dev.kaustubh.net.job_portal.controller;
 
-import co.elastic.clients.elasticsearch.nodes.Http;
 import dev.kaustubh.net.job_portal.model.Application;
 import dev.kaustubh.net.job_portal.model.Job;
 import dev.kaustubh.net.job_portal.model.User;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -45,12 +45,31 @@ public class ApplicationController {
 
         double skillsScore = ((matchingSkills / job.getSkillsRequired().size()) * 100);
 
-        double experienceScore = (((double) application.getExperience() / job.getRequiredExperience()) * 100);
+        int experience = Optional.ofNullable(application.getExperience())
+                .map(e -> {
+                    try {
+                        return Integer.parseInt(e);
+                    } catch (NumberFormatException ex) {
+                        return 0; // Default value
+                    }
+                })
+                .orElse(0);
+        int reqExperience = Optional.ofNullable(job.getRequiredExperience())
+                .map(e -> {
+                    try {
+                        return Integer.parseInt(e);
+                    } catch (NumberFormatException ex) {
+                        return 0; // Default value
+                    }
+                })
+                .orElse(0);
+
+        double experienceScore = (((double) experience / reqExperience) * 100);
         experienceScore = Math.min(experienceScore, 100);
 
         double educationScore = application.getEducation().equals(job.getRequiredEducation()) ? 100 : 50;
 
-        return (skillsScore * 0.5) + (experienceScore * 0.3) + (experienceScore * 0.2);
+        return (skillsScore * 0.5) + (experienceScore * 0.3) + (educationScore * 0.2);
     }
 
     @PostMapping("/create")

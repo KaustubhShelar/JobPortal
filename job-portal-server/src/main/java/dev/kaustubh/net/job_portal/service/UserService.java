@@ -43,6 +43,14 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
+        if(user.getRole() != null  && user.getRole().equalsIgnoreCase("Job Seeker")){
+            user.setCompanyId("NA");
+        }else if(user.getRole() != null){
+            if(user.getCompanyId() == null || user.getCompanyId().isEmpty()){
+                throw new RuntimeException("Please Link Company to the User!");
+            }
+        }
+
         return mongoTemplate.save(user);
     }
 
@@ -87,6 +95,9 @@ public class UserService {
             }else {
                 existingUser.setSkills(userUpdates.getSkills());
             }
+        }
+        if(userUpdates.getCompanyId() != null){
+            existingUser.setCompanyId(userUpdates.getCompanyId());
         }
 
         return userRepository.save(existingUser);

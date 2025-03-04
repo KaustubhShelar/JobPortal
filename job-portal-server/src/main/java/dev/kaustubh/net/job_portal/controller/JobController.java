@@ -1,12 +1,18 @@
 package dev.kaustubh.net.job_portal.controller;
 
+import dev.kaustubh.net.job_portal.model.Company;
 import dev.kaustubh.net.job_portal.model.Job;
 import dev.kaustubh.net.job_portal.model.User;
+import dev.kaustubh.net.job_portal.service.CompanyService;
 import dev.kaustubh.net.job_portal.service.JobService;
 import dev.kaustubh.net.job_portal.service.UserService;
 import dev.kaustubh.net.job_portal.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,15 +33,22 @@ public class JobController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private CompanyService companyService;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
     @GetMapping("")
     public ResponseEntity<List<Job>> getAllJobs(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String location,
-            @RequestParam(required = false) Double salary,
+            @RequestParam(required = false) String salary,
             @RequestParam(required = false) String requiredEducation,
+            @RequestParam(required = false) String companyId,
             @RequestParam(required = false) List<String> skillsRequired,
-            @RequestParam(required = false) Integer requiredExperience){
-        return ResponseEntity.ok(jobService.getJobsByFilter(title, location, salary, requiredEducation, skillsRequired, requiredExperience));
+            @RequestParam(required = false) String requiredExperience){
+        return ResponseEntity.ok(jobService.getJobsByFilter(title, location, salary, requiredEducation, companyId, skillsRequired, requiredExperience));
     }
 
     @GetMapping("/{id}")
@@ -75,6 +88,13 @@ public class JobController {
             job.setEmployerId(email); // Set employerId as the current user's email
 
             Job savedJob = jobService.createJob(job);
+
+            // updating the jobsPosted array in Company document
+            mongoTemplate.update(Company.class)
+                    .matching(Criteria.where("id").is(job.getCompanyId()))
+                    .apply(new Update().push("jobsPosted").value(savedJob.getId()))
+                    .first();
+
             return ResponseEntity.status(HttpStatus.CREATED).body(savedJob);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());

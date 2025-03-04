@@ -11,7 +11,7 @@ public class Application {
     private String userId;
     private String status;
     private double rankScore;
-    private int experience;
+    private String experience;
     private String education;
 
     public String getId() {
@@ -54,11 +54,11 @@ public class Application {
         this.rankScore = rankScore;
     }
 
-    public int getExperience() {
+    public String getExperience() {
         return experience;
     }
 
-    public void setExperience(int experience) {
+    public void setExperience(String experience) {
         this.experience = experience;
     }
 

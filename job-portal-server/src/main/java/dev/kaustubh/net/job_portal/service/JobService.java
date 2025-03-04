@@ -20,7 +20,7 @@ public class JobService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    public List<Job> getJobsByFilter(String title,String location,Double salary,String requiredEducation,List<String> skillsRequired, Integer requiredExperience){
+    public List<Job> getJobsByFilter(String title,String location,String salary,String requiredEducation,String companyId,List<String> skillsRequired, String requiredExperience){
         Query query = new Query();
         if(title != null && !title.isEmpty()){
             query.addCriteria(Criteria.where("title").is(title));
@@ -28,16 +28,19 @@ public class JobService {
         if (location != null && !location.isEmpty()) {
             query.addCriteria(Criteria.where("location").is(location));
         }
-        if (salary != null) {
+        if (salary != null && !salary.isEmpty()) {
             query.addCriteria(Criteria.where("salary").is(salary));
         }
         if (requiredEducation != null && !requiredEducation.isEmpty()) {
             query.addCriteria(Criteria.where("requiredEducation").is(requiredEducation));
         }
+        if (companyId != null && !companyId.isEmpty()) {
+            query.addCriteria(Criteria.where("companyId").is(companyId));
+        }
         if (skillsRequired != null && !skillsRequired.isEmpty()) {
             query.addCriteria(Criteria.where("skillsRequired").in(skillsRequired));
         }
-        if (requiredExperience != null) {
+        if (requiredExperience != null && !requiredExperience.isEmpty()) {
             query.addCriteria(Criteria.where("requiredExperience").is(requiredExperience));
         }
         return mongoTemplate.find(query, Job.class);
@@ -87,7 +90,7 @@ public class JobService {
         if (jobUpdates.getLocation() != null) {
             existingJob.setLocation(jobUpdates.getLocation());
         }
-        if (jobUpdates.getSalary() != 0) {
+        if (jobUpdates.getSalary() != null) {
             existingJob.setSalary(jobUpdates.getSalary());
         }
         if (jobUpdates.getSkillsRequired() != null) {
@@ -105,11 +108,17 @@ public class JobService {
         if (jobUpdates.getEmployerId() != null) {
             existingJob.setEmployerId(jobUpdates.getEmployerId());
         }
-        if (jobUpdates.getRequiredExperience() != 0) {
+        if (jobUpdates.getRequiredExperience() != null) {
             existingJob.setRequiredExperience(jobUpdates.getRequiredExperience());
         }
         if (jobUpdates.getRequiredEducation() != null) {
             existingJob.setRequiredEducation(jobUpdates.getRequiredEducation());
+        }
+        if (jobUpdates.getCompanyId() != null) {
+            existingJob.setCompanyId(jobUpdates.getCompanyId());
+        }
+        if (jobUpdates.getPostedAt() != null) {
+            existingJob.setPostedAt(jobUpdates.getPostedAt());
         }
 
         return jobRepository.save(existingJob);
