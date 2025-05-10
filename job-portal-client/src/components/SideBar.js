@@ -1,0 +1,47 @@
+import React, { useState } from "react";
+import { Drawer, List, ListItem, ListItemText, IconButton, Divider, ListItemButton } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+
+const Sidebar = () => {
+  const [open, setOpen] = useState(false);
+
+  const toggleDrawer = (isOpen) => () => {
+    setOpen(isOpen);
+  };
+
+  const menuItems = [
+    { text: "Home", link: "/" },
+    { text: "View Applications", link: "/applications" },
+    { text: "Search Jobs", link: "/search-jobs" }
+  ];
+
+  return (
+    <>
+      <IconButton size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+            onClick={toggleDrawer(true)}>
+        <MenuIcon />
+      </IconButton>
+
+      <Drawer anchor="left" open={open} onClose={toggleDrawer(false)}>
+        <List>
+          {menuItems.map((item, index) => (
+            <React.Fragment key={item.text}>
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => (window.location.href = item.link)}>
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
+              </ListItem>
+              {index !== menuItems.length - 1 && <Divider />}
+            </React.Fragment>
+          ))}
+        </List>
+      </Drawer>
+    </>
+  );
+};
+
+export default Sidebar;
